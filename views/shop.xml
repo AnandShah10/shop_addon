@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--    Adding Field in product-->
+    <record id="product_template_inherit_form" model="ir.ui.view">
+        <field name="name">product.template.inherit.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='general_information']//field[@name='company_id']" position="after">
+                <field name="product_name"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!--    Changing name from shop page-->
+    <template id="website_sale_inherit_form" inherit_id="website_sale.products_item">
+        <xpath expr="//a[@class='text-primary text-decoration-none']" position="replace">
+            <a t-if="not product.product_name" class="text-primary text-decoration-none" itemprop="name"
+               t-att-href="product_href"
+               t-att-content="product.name" t-field="product.name"/>
+            <a t-if="product.product_name" class="text-primary text-decoration-none" itemprop="name"
+               t-att-href="product_href"
+               t-att-content="product.product_name" t-field="product.product_name"/>
+        </xpath>
+    </template>
+
+    <!--    Changing name inside product detail page and breadcrumbs-->
+    <template id="custom_product" inherit_id="website_sale.product" name="Custom Product">
+        <!--        breadcrumb change-->
+        <xpath expr="//li[@class='breadcrumb-item active']/span[@t-field='product.name']" position="replace">
+            <span t-if="product.product_name" t-field="product.product_name"/>
+            <span t-if="not product.product_name" t-field="product.name"/>
+        </xpath>
+        <!--        additional title-->
+        <xpath expr="//t[@t-set='additional_title']" position="replace">
+            <t t-if="product.product_name" t-set="additional_title" t-value="product.product_name"/>
+            <t t-if="not product.product_name" t-set="additional_title" t-value="product.name"/>
+        </xpath>
+        <!--        detail page-->
+        <xpath expr="//h1[@itemprop='name']" position="replace">
+            <h1 t-if="product.product_name" itemprop="name" t-field="product.product_name">Product Name</h1>
+            <h1 t-if="not product.product_name" itemprop="name" t-field="product.name">Product Name</h1>
+        </xpath>
+    </template>
+
+    <!--    Change name in cart page-->
+    <template id="cart_inherit" inherit_id="website_sale.cart_lines">
+        <xpath expr="//h6[@class='d-inline align-top h6 fw-bold']" position="replace">
+            <h6 t-if="line.product_id.product_name" t-field="line.product_id.product_name"
+                class="d-inline align-top h6 fw-bold"/>
+            <h6 t-if="not line.product_id.product_name" t-field="line.name_short"
+                class="d-inline align-top h6 fw-bold"/>
+        </xpath>
+    </template>
+
+    <!--    Change name in wishlist-->
+    <template id="wish_inherit" inherit_id="website_sale_wishlist.product_wishlist">
+        <xpath expr="//a[@t-att-href='wish.product_id.website_url']//t" position="replace">
+            <t t-if="wish.product_id.product_name" t-esc="wish.product_id.product_name"/>
+            <t t-if="not wish.product_id.product_name" t-esc="wish.product_id.display_name"/>
+        </xpath>
+    </template>
+
+    <!--    Change name in compare page-->
+    <template id="compare_inherit" inherit_id="website_sale_comparison.product_compare">
+        <xpath expr="//a[@class='o_product_comparison_table']//span" position="replace">
+            <span t-if="product.product_name" t-esc="product.product_name"></span>
+            <span t-if="not product.product_name" t-esc="product.display_name"></span>
+        </xpath>
+    </template>
+
+    <!--    Change name in compare popup-->
+    <template id="compare_popup_inherit" inherit_id="website_sale_comparison.product_product">
+        <xpath expr="//a[@t-att-href='product.website_url']//t" position="replace">
+            <t t-if="product.product_name" t-esc="product.product_name"></t>
+            <t t-if="not product.product_name" t-esc="product.display_name"></t>
+        </xpath>
+    </template>
+
+    <!--    <template id="template">-->
+    <!--        <t t-extend="website.s_searchbar.autocomplete">-->
+    <!--            <xpath expr="//div[@class='o_search_result_item_detail px-3']//div" position="replace">-->
+    <!--                <t t-esc="result"/>-->
+    <!--                <div t-if="result['product_name']" t-attf-class="h6 fw-bold #{description ? '' : 'mb-0'}"-->
+    <!--                     t-out="result['product_name']"/>-->
+    <!--                <div t-if="not result['product_name']" t-attf-class="h6 fw-bold #{description ? '' : 'mb-0'}"-->
+    <!--                     t-out="result['name']"/>-->
+    <!--            </xpath>-->
+    <!--            <t t-jquery=".h6" t-operation="replace">-->
+    <!--                <t t-esc="result"/>-->
+    <!--                <h1>Hello</h1>-->
+    <!--                <div t-if="result['product_name']" t-attf-class="h6 fw-bold #{description ? '' : 'mb-0'}"-->
+    <!--                     t-out="result['product_name']"/>-->
+    <!--                <div t-if="not result['product_name']" t-attf-class="h6 fw-bold #{description ? '' : 'mb-0'}"-->
+    <!--                     t-out="result['name']"/>-->
+    <!--            </t>-->
+
+    <!--            <t t-extend="website.s_searchbar.autocomplete">-->
+    <!--                <t t-jquery=".h6" t-operation="replace">-->
+    <!--                    <script>console.log("result",result);</script>-->
+    <!--                    <t>-->
+    <!--                        <p>hey</p>-->
+    <!--                        <div t-attf-class="#{description ? '' : 'mb-0'}" t-esc="result['product_name']"/>-->
+    <!--                    </t>-->
+    <!--&lt;!&ndash;                    <t t-else="">&ndash;&gt;-->
+    <!--&lt;!&ndash;                        <p>nope</p>&ndash;&gt;-->
+    <!--&lt;!&ndash;                        <div t-attf-class="#{description ? '' : 'mb-0'}" t-esc="result['name']"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;                    </t>&ndash;&gt;-->
+    <!--                </t>-->
+    <!--            </t>-->
+
+    <!--&lt;!&ndash;        </t>&ndash;&gt;-->
+    <!--    </template>-->
+
+    <!--    <template id="recommendation_inherit">-->
+    <!--        <t t-extend="website.s_searchbar.autocomplete">-->
+    <!--            <xpath expr="//div[@class='o_search_result_item_detail px-3']//div[@t-attf-class='h6 #{description ? '' : 'mb-0'}']"-->
+    <!--                   position="replace">-->
+    <!--                <div t-if="result['product_name']" t-attf-class="h6 fw-bold #{description ? '' : 'mb-0'}"-->
+    <!--                     t-out="result['product_name']"/>-->
+    <!--                <div t-if="not result['product_name']" t-attf-class="h6 fw-bold #{description ? '' : 'mb-0'}"-->
+    <!--                     t-out="result"/>-->
+    <!--            </xpath>-->
+    <!--        </t>-->
+    <!--    </template>-->
+
+</odoo>
