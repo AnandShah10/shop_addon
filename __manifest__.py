@@ -9,7 +9,7 @@
     'description': """
 My shop addon module
 """,
-    'category': 'Website/Shop',
+    'category': 'Custom/Website_shop',
     'website': 'https://www.odoo.com/app/invoicing',
     'depends': ['mail', 'website','website_sale'],
     'data': [
